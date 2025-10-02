@@ -11,7 +11,7 @@ const app = express();
 // Habilitar CORS
 app.use(cors({
   origin: "*", // o reemplazá con la URL de tu frontend
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE","PATCH"],
   credentials: true,
 }));
 app.use(express.json());
