@@ -72,4 +72,27 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.patch("/asistencia/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { plenaria, asistio } = req.body; // plenaria: 1-4, asistio: true/false
+
+    if (![1, 2, 3, 4].includes(plenaria)) {
+      return res.status(400).json({ error: "Plenaria inválida. Debe ser 1, 2, 3 o 4." });
+    }
+
+    const column = `asistio_plenaria${plenaria}`;
+
+    const result = await client.execute({
+      sql: `UPDATE inscripciones SET ${column} = ? WHERE id = ?`,
+      args: [asistio ? 1 : 0, id],
+    });
+
+    res.json({ message: `Asistencia plenaria ${plenaria} actualizada correctamente.` });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al actualizar asistencia." });
+  }
+});
+
 export default router;
