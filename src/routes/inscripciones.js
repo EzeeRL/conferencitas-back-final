@@ -14,10 +14,11 @@ router.post("/", async (req, res) => {
       condicion_medica,
       detalle_condicion,
       plenaria,
-      pago
+      pago,
+       edad
     } = req.body;
 
-    if (!nombre_chico || !apellido_chico || !nombre_responsable || !apellido_responsable || !celular_responsable || !plenaria) {
+    if (!nombre_chico || !apellido_chico || !nombre_responsable || !apellido_responsable || !celular_responsable || !plenaria || edad === undefined) {
       return res.status(400).json({ error: "Todos los campos obligatorios deben estar completos." });
     }
 
@@ -29,8 +30,8 @@ router.post("/", async (req, res) => {
     const result = await client.execute({
       sql: `
         INSERT INTO inscripciones 
-        (nombre_chico, apellido_chico, nombre_responsable, apellido_responsable, celular_responsable, condicion_medica, detalle_condicion, plenaria, pago)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (nombre_chico, apellido_chico, nombre_responsable, apellido_responsable, celular_responsable, condicion_medica, detalle_condicion, plenaria, pago,  edad)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         RETURNING id
       `,
       args: [
@@ -42,7 +43,8 @@ router.post("/", async (req, res) => {
         condicion_medica ? 1 : 0,
         detalle_condicion || null,
         plenaria,
-        pago || false
+        pago || false,
+        edad
       ],
     });
 
