@@ -97,4 +97,29 @@ router.patch("/asistencia/:id", async (req, res) => {
   }
 });
 
+router.patch("/edad/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { edad } = req.body;
+
+    if (edad === undefined || isNaN(edad)) {
+      return res.status(400).json({ error: "Debe proporcionar una edad válida." });
+    }
+
+    const result = await client.execute({
+      sql: `UPDATE inscripciones SET edad = ? WHERE id = ?`,
+      args: [edad, id],
+    });
+
+    if (result.rowsAffected === 0) {
+      return res.status(404).json({ error: "Inscripción no encontrada." });
+    }
+
+    res.json({ message: "Edad actualizada correctamente." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al actualizar edad." });
+  }
+});
+
 export default router;
