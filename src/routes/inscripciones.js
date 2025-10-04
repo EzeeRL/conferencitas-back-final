@@ -122,4 +122,48 @@ router.patch("/edad/:id", async (req, res) => {
   }
 });
 
+//salio
+router.patch("/salio/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { salio } = req.body; // true/false
+
+    if (salio === undefined) {
+      return res.status(400).json({ error: "Debe proporcionar un valor para 'salio' (true/false)." });
+    }
+
+    const result = await client.execute({
+      sql: `UPDATE inscripciones SET salio = ? WHERE id = ?`,
+      args: [salio ? 1 : 0, id],
+    });
+
+    if (result.rowsAffected === 0) {
+      return res.status(404).json({ error: "Inscripción no encontrada." });
+    }
+
+    res.json({ message: "Estado de 'salio' actualizado correctamente." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al actualizar 'salio'." });
+  }
+});
+
+
+// PATCH -> Resetear el campo 'salio' de todos los chicos
+router.patch("/salio/reset", async (req, res) => {
+  try {
+    const result = await client.execute({
+      sql: `UPDATE inscripciones SET salio = 0`,
+      args: [],
+    });
+
+    res.json({
+      message: "Campo 'salio' reseteado a false en todas las inscripciones.",
+      rowsAffected: result.rowsAffected
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al resetear el campo 'salio'." });
+  }
+});
 export default router;
